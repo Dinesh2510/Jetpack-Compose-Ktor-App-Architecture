@@ -1,7 +1,10 @@
-package com.pixeldev.compose.ui.theme
+package com.pixeldev.compose.di
 
 
 import com.pixeldev.compose.data.remote.ApiService
+import com.pixeldev.compose.data.repository.home.HomeRepository
+import com.pixeldev.compose.data.repository.home.HomeRepositoryImpl
+import com.pixeldev.compose.utils.Constants.Companion.BASE_URL
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -13,14 +16,12 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
-
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
+
     @Provides
-    fun providesBaseUrl(): String {
-        return "BASE_URL"
-    }
+    fun providesBaseUrl(): String = BASE_URL
 
     @Provides
     fun providesLoggingInterceptor(): HttpLoggingInterceptor {
@@ -29,15 +30,13 @@ object NetworkModule {
 
     @Provides
     fun provideOkHttpClient(loggingInterceptor: HttpLoggingInterceptor): OkHttpClient {
-        val okHttpClient = OkHttpClient().newBuilder()
-
-        okHttpClient.callTimeout(40, TimeUnit.SECONDS)
-        okHttpClient.connectTimeout(40, TimeUnit.SECONDS)
-        okHttpClient.readTimeout(40, TimeUnit.SECONDS)
-        okHttpClient.writeTimeout(40, TimeUnit.SECONDS)
-        okHttpClient.addInterceptor(loggingInterceptor)
-        okHttpClient.build()
-        return okHttpClient.build()
+        return OkHttpClient.Builder()
+            .callTimeout(40, TimeUnit.SECONDS)
+            .connectTimeout(40, TimeUnit.SECONDS)
+            .readTimeout(40, TimeUnit.SECONDS)
+            .writeTimeout(40, TimeUnit.SECONDS)
+            .addInterceptor(loggingInterceptor)
+            .build()
     }
 
     @Provides
@@ -46,7 +45,11 @@ object NetworkModule {
     }
 
     @Provides
-    fun provideRetrofitClient(okHttpClient: OkHttpClient, baseUrl: String, converterFactory: Converter.Factory): Retrofit {
+    fun provideRetrofitClient(
+        okHttpClient: OkHttpClient,
+        baseUrl: String,
+        converterFactory: Converter.Factory
+    ): Retrofit {
         return Retrofit.Builder()
             .baseUrl(baseUrl)
             .client(okHttpClient)
@@ -54,9 +57,16 @@ object NetworkModule {
             .build()
     }
 
+    // ✅ IMPORTANT: Only bind ApiService ONCE and with Singleton scope
     @Provides
+    @Singleton
     fun provideApiService(retrofit: Retrofit): ApiService {
         return retrofit.create(ApiService::class.java)
     }
 
+    @Provides
+    @Singleton
+    fun provideHomeRepository(apiService: ApiService): HomeRepository {
+        return HomeRepositoryImpl(apiService)
+    }
 }
