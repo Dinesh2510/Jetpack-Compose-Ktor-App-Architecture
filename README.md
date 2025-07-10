@@ -2,6 +2,10 @@
 
 A starter template for building Android applications using **Jetpack Compose** and **Dependency Injection**. This project includes all the basic structure and setup required to jumpstart your Compose-based Android app.
 
+A foundational Android project template designed to kickstart modern app development using **Jetpack Compose**, **Hilt (for dependency injection)**, **ViewModel (MVVM architecture)**, **Room (local database)**, and **networking with Retrofit or Ktor**.
+
+This project is a ready-to-use boilerplate that sets up all essential tools and practices needed to start building robust Android applications using Kotlin.
+
 ---
 
 ## 📦 Features
