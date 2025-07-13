@@ -54,8 +54,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.automirrored.outlined.EventNote
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Logout
@@ -74,9 +76,10 @@ import androidx.compose.material3.BottomAppBarDefaults.windowInsets
 import androidx.compose.ui.draw.clip
 import coil.compose.rememberAsyncImagePainter
 
-class HomePage : ComponentActivity() {
+class HomePage  : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             MainScreen()
         }
@@ -110,10 +113,9 @@ fun MainScreen() {
         unselectedTextColor = Color.White.copy(alpha = 0.7f)
     )
 
-
-    val navController = rememberNavController()
+      val navController = rememberNavController()
     val currentBackStack by navController.currentBackStackEntryAsState()
-   // val currentRoute = currentBackStack?.destination?.route
+    // val currentRoute = currentBackStack?.destination?.route
     val currentRoute = currentBackStack?.destination?.route ?: BottomNavItem.Home.route
 
 
@@ -170,7 +172,7 @@ fun MainScreen() {
                     NavigationDrawerItem(
                         label = { Text("About Us", color = Color.White) },
                         icon = { Icon(Icons.Outlined.EventNote, contentDescription = null) },
-                        selected = currentRoute == "about", // match your actual route name here
+                        selected = false, // match your actual route name here
                         onClick = {
                             navController.navigate("about") {
                                 launchSingleTop = true
@@ -307,21 +309,25 @@ fun MainScreen() {
             floatingActionButtonPosition = FabPosition.Center,
 
             ) { padding ->
-            NavHost(
-                navController,
-                startDestination = BottomNavItem.Home.route,
-                Modifier.padding(padding)
-            ) {
-                composable(BottomNavItem.Home.route) { Screen("Home Screen") }
-                composable(BottomNavItem.Event.route) { Screen("Event Screen") }
-                composable(BottomNavItem.Scan.route) { Screen("Scan Screen") }
-                composable(BottomNavItem.Photos.route) { Screen("Photos Screen") }
-                composable(BottomNavItem.Profile.route) { Screen("Profile Screen") }
-
-                composable("about") { Screen("About Us") }
-                composable("privacy_policy") { Screen("Privacy Policy") }
-            }
+            BottomNavGraph(navController = navController, modifier = Modifier.padding(padding))
         }
+    }
+}
+
+@Composable
+fun BottomNavGraph(navController: NavHostController, modifier: Modifier = Modifier) {
+    NavHost(
+        navController = navController,
+        startDestination = BottomNavItem.Home.route,
+        modifier = modifier
+    ) {
+        composable(BottomNavItem.Home.route) { Screen("Home Screen") }
+        composable(BottomNavItem.Event.route) { Screen("Event Screen") }
+        composable(BottomNavItem.Scan.route) { Screen("Scan Screen") }
+        composable(BottomNavItem.Photos.route) { Screen("Photos Screen") }
+        composable(BottomNavItem.Profile.route) { Screen("Profile Screen") }
+                composable("about") {AboutScreen(navController) }
+                composable("privacy_policy") { Screen("Privacy Policy") }
     }
 }
 
@@ -399,6 +405,26 @@ fun Screen(text: String) {
         modifier = Modifier.fillMaxSize().background(Color(0xFF2C2C2C))
     ) {
         Text(text = text, color = Color.White)
+    }
+}
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AboutScreen(navController: NavHostController) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("About Us") },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                    }
+                }
+            )
+        }
+    ) {padd->
+        Box(modifier = Modifier.fillMaxSize().padding(padd), contentAlignment = Alignment.Center) {
+            Text("About Us Full Screen Content")
+        }
     }
 }
 
