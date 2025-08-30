@@ -31,8 +31,8 @@ Replace the image upload base URL with your own server URL in the UploadScreen c
 Run the app — you can now upload images to your server directly.
 ```
 ## 📲 App Screens
-| Screenshot | Screenshot | Screenshot |
-|------------|------------|------------|
+| Login                                         | UserDetails                                   | Image Upload                                  |
+|-----------------------------------------------|-----------------------------------------------|-----------------------------------------------|
 | ![s1](Screens/Screenshot_20250830_230947.png) | ![s2](Screens/Screenshot_20250830_231022.png) | ![s3](Screens/Screenshot_20250830_231913.png) |
 
 ## 🏗️ Project Structure
